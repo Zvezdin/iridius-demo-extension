@@ -95,6 +95,7 @@ export const ORIGIN_HOST = {
   FACEBOOK: 'facebook.com',
   WHATSAPP: 'whatsapp.com',
   MESSENGER: 'messenger.com',
+  DAPP: 'pui.io',
 };
 
 export const ORIGIN_TIMEOUT = {
@@ -107,4 +108,5 @@ export const ORIGIN_TYPE = {
   FACEBOOK: 'FACEBOOK',
   WHATSAPP: 'WHATSAPP',
   MESSENGER: 'MESSENGER',
+  DAPP: 'DAPP',
 };
