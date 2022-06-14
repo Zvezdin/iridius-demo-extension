@@ -23,10 +23,10 @@
     },
     "content_scripts": [
         {
-            "matches": ["*://*.whatsapp.com/*"],
+            "matches": ["http://localhost:8000/"],
             "all_frames": true,
             "exclude_matches": ["*://www.whatsapp.com/", "*://*.whatsapp.com/bt-manifest/*"],
-            "js": ["contentWA.js"],
+            "js": ["contentDApp.js"],
             "run_at": "document_start"
         }
     ],
@@ -34,6 +34,6 @@
 	"webRequest"
     ],
     "host_permissions": [
-        "https://*.privacy-auditability.cloudflare.com/"
+        "https://api.studio.thegraph.com/query/29027/iridius/0.0.1"
     ]
 }
