@@ -73,15 +73,14 @@ const fromHexString = hexString =>
 const toHexString = bytes =>
   bytes.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
 
-function getCFHashWorkaroundFunction(host, version) {
+function getCFHashWorkaroundFunction() {
   return new Promise((resolve, reject) => {
-    fetch(
-      'https://staging-api.privacy-auditability.cloudflare.com/v1/hash/' +
-        encodeURIComponent(host) +
-        '/' +
-        encodeURIComponent(version),
-      { method: 'GET' }
-    )
+    console.log('Fetching master hash');
+    fetch('https://api.studio.thegraph.com/query/29027/iridius/0.0.1', {
+      method: 'POST',
+      body: '{"query": "{latestHashes(first: 1) {hash}}"}',
+      headers: { 'content-type': 'application/json' },
+    })
       .then(response => {
         resolve(response);
       })
@@ -93,16 +92,14 @@ function getCFHashWorkaroundFunction(host, version) {
 
 async function validateManifest(rootHash, leaves, host, version, workaround) {
   // does rootHash match what was published?
-  const cfResponse = await getCFHashWorkaroundFunction(host, version).catch(
-    cfError => {
-      console.log('error fetching hash from CF', cfError);
-      return {
-        valid: false,
-        reason: 'ENDPOINT_FAILURE',
-        error: cfError,
-      };
-    }
-  );
+  const cfResponse = await getCFHashWorkaroundFunction().catch(cfError => {
+    console.log('error fetching hash from CF', cfError);
+    return {
+      valid: false,
+      reason: 'ENDPOINT_FAILURE',
+      error: cfError,
+    };
+  });
   if (cfResponse == null || cfResponse.json == null) {
     return {
       valid: false,
@@ -110,9 +107,9 @@ async function validateManifest(rootHash, leaves, host, version, workaround) {
     };
   }
   const cfPayload = await cfResponse.json();
-  let cfRootHash = cfPayload.root_hash;
-  if (cfPayload.root_hash.startsWith('0x')) {
-    cfRootHash = cfPayload.root_hash.slice(2);
+  let cfRootHash = cfPayload.data.latestHashes[0].hash;
+  if (cfRootHash.startsWith('0x')) {
+    cfRootHash = cfRootHash.slice(2);
   }
   // validate
   if (rootHash !== cfRootHash) {
@@ -300,6 +297,7 @@ function getDebugLog(tabId) {
 
 export function handleMessages(message, sender, sendResponse) {
   console.log('in handle messages ', message);
+
   if (message.type == MESSAGE_TYPE.UPDATE_ICON) {
     updateIcon(message, sender);
     return;
@@ -474,7 +472,12 @@ export function handleMessages(message, sender, sendResponse) {
         .map(b => b.toString(16).padStart(2, '0'))
         .join('');
 
-      if (manifestObj.leaves.includes(jsHash)) {
+      if (
+        manifestObj.leaves.includes(jsHash) ||
+        jsHash ===
+          'b45ca21a5639af8189fae968f605ef83af5a421ee412bd2f23abdeaf4f124cc3'
+      ) {
+        //whitelist metamask's scripts
         sendResponse({ valid: true });
       } else {
         console.log('generate hash is ', jsHash);
@@ -505,6 +508,7 @@ export function handleMessages(message, sender, sendResponse) {
 
   if (message.type == MESSAGE_TYPE.DEBUG) {
     addDebugLog(sender.tab.id, message.log);
+    console.log(message.log);
     return;
   }
 
