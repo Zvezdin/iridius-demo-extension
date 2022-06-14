@@ -266,6 +266,11 @@ export function storeFoundJS(scriptNodeMaybe, scriptList) {
       return;
     }
 
+    chrome.runtime.sendMessage({
+      type: MESSAGE_TYPE.DEBUG,
+      log: 'Got manifest, ' + rawManifest,
+    });
+
     let leaves = rawManifest.leaves;
     let otherHashes = '';
     let otherType = '';
@@ -368,6 +373,11 @@ export function storeFoundJS(scriptNodeMaybe, scriptList) {
   }
   // need to get the src of the JS
   if (scriptNodeMaybe.src != null && scriptNodeMaybe.src !== '') {
+    chrome.runtime.sendMessage({
+      type: MESSAGE_TYPE.DEBUG,
+      log: 'Found script with src ' + scriptNodeMaybe.src,
+    });
+
     if (scriptList.size === 1) {
       scriptList.get(scriptList.keys().next().value).push({
         type: MESSAGE_TYPE.JS_WITH_SRC,
@@ -381,6 +391,11 @@ export function storeFoundJS(scriptNodeMaybe, scriptList) {
       scriptNodeMaybe.attributes['data-binary-transparency-hash-key'];
     const hashLookupKey = hashLookupAttribute && hashLookupAttribute.value;
     if (scriptList.size === 1) {
+      chrome.runtime.sendMessage({
+        type: MESSAGE_TYPE.DEBUG,
+        log: 'found raw js script' + JSON.stringify(scriptNodeMaybe),
+      });
+
       scriptList.get(scriptList.keys().next().value).push({
         type: MESSAGE_TYPE.RAW_JS,
         rawjs: scriptNodeMaybe.innerHTML,
@@ -423,7 +438,7 @@ const AttributeCheckPairs = [
   { nodeName: 'a', attributeName: 'xlink:href' },
   { nodeName: 'ncc', attributeName: 'href' },
   { nodeName: 'embed', attributeName: 'src' },
-  { nodeName: 'object', attributeName: 'data'}
+  { nodeName: 'object', attributeName: 'data' },
 ];
 
 export function hasViolatingJavaScriptURI(htmlElement) {
@@ -525,6 +540,10 @@ export function hasInvalidScripts(scriptNodeMaybe, scriptList) {
 }
 
 export const scanForScripts = () => {
+  chrome.runtime.sendMessage({
+    type: MESSAGE_TYPE.DEBUG,
+    log: 'Scanning for scripts',
+  });
   const allElements = document.getElementsByTagName('*');
 
   Array.from(allElements).forEach(allElement => {
@@ -576,12 +595,17 @@ export const scanForScripts = () => {
 async function processJSWithSrc(script, origin, version) {
   // fetch the script from page context, not the extension context.
   try {
+    chrome.runtime.sendMessage({
+      type: MESSAGE_TYPE.DEBUG,
+      log: 'Verifying JS with src =' + script.src,
+    });
     const sourceResponse = await fetch(script.src, { method: 'GET' });
     // we want to clone the stream before reading it
     const sourceResponseClone = sourceResponse.clone();
     const fileNameArr = script.src.split('/');
     const fileName = fileNameArr[fileNameArr.length - 1].split('?')[0];
     let sourceText = await sourceResponse.text();
+
     sourceScripts.set(
       fileName,
       sourceResponseClone.body.pipeThrough(new window.CompressionStream('gzip'))
@@ -595,10 +619,9 @@ async function processJSWithSrc(script, origin, version) {
     // we want to slice out the source URL from the source
     const sourceURLIndex = sourceText.indexOf('//# sourceURL');
     // if //# sourceURL is at the beginning of the response, sourceText should be empty, otherwise slicing indices will be (0, -1) and sourceText will be unchanged
-    if(sourceURLIndex == 0) {
+    if (sourceURLIndex == 0) {
       sourceText = '';
-    }
-    else if (sourceURLIndex > 0) {
+    } else if (sourceURLIndex > 0) {
       // doing minus 1 because there's usually either a space or new line
       sourceText = sourceText.slice(0, sourceURLIndex - 1);
     }
@@ -612,6 +635,11 @@ async function processJSWithSrc(script, origin, version) {
     // split package up if necessary
     const packages = i18nStripped.split('/*FB_PKG_DELIM*/\n');
     const packagePromises = packages.map(jsPackage => {
+      chrome.runtime.sendMessage({
+        type: MESSAGE_TYPE.DEBUG,
+        log: 'Final package ' + jsPackage,
+      });
+
       return new Promise((resolve, reject) => {
         chrome.runtime.sendMessage(
           {
@@ -635,6 +663,10 @@ async function processJSWithSrc(script, origin, version) {
       valid: true,
     };
   } catch (scriptProcessingError) {
+    chrome.runtime.sendMessage({
+      type: MESSAGE_TYPE.DEBUG,
+      log: 'JS SRC¡ processing error ' + scriptProcessingError,
+    });
     return {
       valid: false,
       type: scriptProcessingError,
