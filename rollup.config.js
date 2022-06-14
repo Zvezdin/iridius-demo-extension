@@ -1,40 +1,14 @@
 export default [
     {
-        input: 'src/js/detectWAMeta.js',
+        input: 'src/js/detectDApp.js',
         output: [{
-            file: 'dist/chrome/contentWA.js',
+            file: 'dist/chrome/contentDApp.js',
             format: 'iife'
         }, {
-            file: 'dist/edge/contentWA.js',
+            file: 'dist/edge/contentDApp.js',
             format: 'iife'
         }, {
-            file: 'dist/firefox/contentWA.js',
-            format: 'iife'
-        }]
-    },
-    {
-        input: 'src/js/detectMSGRMeta.js',
-        output: [{
-            file: 'dist/chrome/contentMSGR.js',
-            format: 'iife'
-        }, {
-            file: 'dist/edge/contentMSGR.js',
-            format: 'iife'
-        }, {
-            file: 'dist/firefox/contentMSGR.js',
-            format: 'iife'
-        }]
-    }, 
-    {
-        input: 'src/js/detectFBMeta.js',
-        output: [{
-            file: 'dist/chrome/contentFB.js',
-            format: 'iife'
-        }, {
-            file: 'dist/edge/contentFB.js',
-            format: 'iife'
-        }, {
-            file: 'dist/firefox/contentFB.js',
+            file: 'dist/firefox/contentDApp.js',
             format: 'iife'
         }]
     },
