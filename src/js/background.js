@@ -76,7 +76,7 @@ const toHexString = bytes =>
 function getCFHashWorkaroundFunction() {
   return new Promise((resolve, reject) => {
     console.log('Fetching master hash');
-    fetch('https://api.studio.thegraph.com/query/29027/iridius/0.0.1', {
+    fetch('https://api.thegraph.com/subgraphs/name/zvezdin/iridius', {
       method: 'POST',
       body: '{"query": "{latestHashes(first: 1) {hash}}"}',
       headers: { 'content-type': 'application/json' },

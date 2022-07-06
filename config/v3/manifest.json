@@ -23,7 +23,7 @@
     },
     "content_scripts": [
         {
-            "matches": ["http://localhost:8000/"],
+            "matches": ["http://localhost:8000/", "https://zvezdin.github.io/iridius-demo-website/"],
             "all_frames": true,
             "exclude_matches": ["*://www.whatsapp.com/", "*://*.whatsapp.com/bt-manifest/*"],
             "js": ["contentDApp.js"],
@@ -34,6 +34,6 @@
 	"webRequest"
     ],
     "host_permissions": [
-        "https://api.studio.thegraph.com/query/29027/iridius/0.0.1"
+        "https://*.thegraph.com/"
     ]
 }
