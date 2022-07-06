@@ -73,26 +73,33 @@ const fromHexString = hexString =>
 const toHexString = bytes =>
   bytes.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
 
-function getCFHashWorkaroundFunction() {
-  return new Promise((resolve, reject) => {
-    console.log('Fetching master hash');
-    fetch('https://api.thegraph.com/subgraphs/name/zvezdin/iridius', {
+async function getCFHashWorkaroundFunction(host) {
+  const encoder = new TextEncoder(); // Shitty code, I know. Needs to be moved in a separate function
+  const hostEncoded = encoder.encode(host);
+  const hostHashArray = Array.from(
+    new Uint8Array(await crypto.subtle.digest('SHA-256', hostEncoded))
+  );
+  const hostHash = hostHashArray
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+
+  console.log('Fetching master hash using host hash', hostHash);
+  return await fetch(
+    'https://api.thegraph.com/subgraphs/name/zvezdin/iridius',
+    {
       method: 'POST',
-      body: '{"query": "{latestHashes(first: 1) {hash}}"}',
+      body:
+        '{"query": "{latestVersions(where: { id: \\"' +
+        hostHash +
+        '\\" }) {id hash}}"}',
       headers: { 'content-type': 'application/json' },
-    })
-      .then(response => {
-        resolve(response);
-      })
-      .catch(response => {
-        reject(response);
-      });
-  });
+    }
+  );
 }
 
 async function validateManifest(rootHash, leaves, host, version, workaround) {
   // does rootHash match what was published?
-  const cfResponse = await getCFHashWorkaroundFunction().catch(cfError => {
+  const cfResponse = await getCFHashWorkaroundFunction(host).catch(cfError => {
     console.log('error fetching hash from CF', cfError);
     return {
       valid: false,
@@ -107,7 +114,7 @@ async function validateManifest(rootHash, leaves, host, version, workaround) {
     };
   }
   const cfPayload = await cfResponse.json();
-  let cfRootHash = cfPayload.data.latestHashes[0].hash;
+  let cfRootHash = cfPayload.data.latestVersions[0].hash;
   if (cfRootHash.startsWith('0x')) {
     cfRootHash = cfRootHash.slice(2);
   }

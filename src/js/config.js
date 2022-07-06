@@ -95,7 +95,7 @@ export const ORIGIN_HOST = {
   FACEBOOK: 'facebook.com',
   WHATSAPP: 'whatsapp.com',
   MESSENGER: 'messenger.com',
-  DAPP: 'pui.io',
+  DAPP: 'zvezdin.github.io/iridius-demo-website',
 };
 
 export const ORIGIN_TIMEOUT = {
