@@ -26,7 +26,14 @@
             "matches": ["http://localhost:8000/", "https://zvezdin.github.io/iridius-demo-website/"],
             "all_frames": true,
             "exclude_matches": ["*://www.whatsapp.com/", "*://*.whatsapp.com/bt-manifest/*"],
-            "js": ["contentDApp.js"],
+            "js": ["detectDApp.js"],
+            "run_at": "document_start"
+        },
+        {
+            "matches": ["http://localhost:9000/", "https://zvezdin.github.io/iridius-demo-website-failing/"],
+            "all_frames": true,
+            "exclude_matches": ["*://www.whatsapp.com/", "*://*.whatsapp.com/bt-manifest/*"],
+            "js": ["detectDAppFailing.js"],
             "run_at": "document_start"
         }
     ],

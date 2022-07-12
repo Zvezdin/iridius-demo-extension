@@ -2,13 +2,26 @@ export default [
     {
         input: 'src/js/detectDApp.js',
         output: [{
-            file: 'dist/chrome/contentDApp.js',
+            file: 'dist/chrome/detectDApp.js',
             format: 'iife'
         }, {
-            file: 'dist/edge/contentDApp.js',
+            file: 'dist/edge/detectDApp.js',
             format: 'iife'
         }, {
-            file: 'dist/firefox/contentDApp.js',
+            file: 'dist/firefox/detectDApp.js',
+            format: 'iife'
+        }]
+    },
+    {
+        input: 'src/js/detectDAppFailing.js',
+        output: [{
+            file: 'dist/chrome/detectDAppFailing.js',
+            format: 'iife'
+        }, {
+            file: 'dist/edge/detectDAppFailing.js',
+            format: 'iife'
+        }, {
+            file: 'dist/firefox/detectDAppFailing.js',
             format: 'iife'
         }]
     },

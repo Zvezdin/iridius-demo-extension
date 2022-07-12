@@ -83,7 +83,11 @@ async function getCFHashWorkaroundFunction(host) {
     .map(b => b.toString(16).padStart(2, '0'))
     .join('');
 
-  console.log('Fetching master hash using host hash', hostHash);
+  console.log(
+    'Fetching master hash using host hash and host string',
+    hostHash,
+    host
+  );
   return await fetch(
     'https://api.thegraph.com/subgraphs/name/zvezdin/iridius',
     {

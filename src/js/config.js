@@ -96,6 +96,7 @@ export const ORIGIN_HOST = {
   WHATSAPP: 'whatsapp.com',
   MESSENGER: 'messenger.com',
   DAPP: 'zvezdin.github.io/iridius-demo-website',
+  DAPP_FAILING: 'zvezdin.github.io/iridius-demo-website-failing',
 };
 
 export const ORIGIN_TIMEOUT = {
@@ -109,4 +110,5 @@ export const ORIGIN_TYPE = {
   WHATSAPP: 'WHATSAPP',
   MESSENGER: 'MESSENGER',
   DAPP: 'DAPP',
+  DAPP_FAILING: 'DAPP_FAILING',
 };
